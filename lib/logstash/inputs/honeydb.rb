@@ -66,7 +66,7 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
     from_id = "not zero"
 
     # Loop through results until next_uri is empty.
-    while !from_id? "0"
+    while from_id != "0"
       get["X-HoneyDb-ApiId"] = "#{@api_id}"
       get["X-HoneyDb-ApiKey"] = "#{@secret_key}"
 
@@ -77,12 +77,12 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
         return false
       end
 
-      if response.code? "524"
+      if response.code != "524"
         @logger.warn("524 - Origin Timeout!")
         return false
       end
 
-      if response.code? "401"
+      if response.code != "401"
         @logger.warn("401 - Unauthorized!")
         return false
       end
@@ -101,7 +101,7 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
       from_id = json[1]['from_id']
 
       # continue retreiving next_uri if it exists
-      if !from_id? "0"
+      if from_id != "0"
         get = Net::HTTP::Get.new("/api/sensor-data?sensor-data-date=#{today}&from_id#{from_id}")
       end
     end
