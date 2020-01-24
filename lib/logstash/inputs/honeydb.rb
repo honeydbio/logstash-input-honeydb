@@ -77,12 +77,12 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
         return false
       end
 
-      if response.code != "524"
+      if response.code == "524"
         @logger.warn("524 - Origin Timeout!")
         return false
       end
 
-      if response.code != "401"
+      if response.code = "401"
         @logger.warn("401 - Unauthorized!")
         return false
       end
