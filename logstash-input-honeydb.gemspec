@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name          = 'logstash-input-honeydb'
-  s.version       = '0.1.1'
+  s.version       = '0.0.0'
   s.licenses      = ['Apache-2.0']
   s.summary       = 'Logstash input plugin for HoneyDB.'
   s.description   = 'Logstash input plugin for the HoneyDB Threat Information API https://honeydb.io/threats'
