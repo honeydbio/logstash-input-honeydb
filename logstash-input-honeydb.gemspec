@@ -5,8 +5,8 @@ Gem::Specification.new do |s|
   s.summary       = 'Logstash input plugin for HoneyDB.'
   s.description   = 'Logstash input plugin for the HoneyDB Threat Information API https://honeydb.io/threats'
   s.homepage      = 'https://github.com/honeydbio'
-  s.authors       = ['foospidy']
-  s.email         = 'foospidy@users.noreply.github.com'
+  s.authors       = ['honeydbio']
+  s.email         = 'honeydbio@users.noreply.github.com'
   s.require_paths = ['lib']
 
   # Files
