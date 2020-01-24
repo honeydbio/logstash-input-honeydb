@@ -29,7 +29,6 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
     @host = Socket.gethostname
     @http = Net::HTTP.new('honeydb.io', 443)
     @http.set_debug_output($stdout) if @debug
-    @login = Net::HTTP::Post.new("/api/v0/auth")
     @get = Net::HTTP::Get.new("/api/sensor-data")
     @http.use_ssl = true
 
@@ -45,10 +44,8 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
   def run(queue)
     # we can abort the loop if stop? becomes true
     while !stop?
-      #@login.body = URI.encode_www_form({"email" => @email, "password" => @password})
-
       if fetch(queue)
-        @logger.info("Requests feed retreived successfully.")
+        @logger.info("Data retreived successfully.")
       end
 
       # because the sleep interval can be big, when shutdown happens
