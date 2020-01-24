@@ -59,7 +59,7 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
 
   def fetch(queue)
     # get today's date for sensor-data-date parameter
-    today = Time.utc.now.strftime("%Y-%m-%d")
+    today = Time.now.utc.strftime("%Y-%m-%d")
 
     # Set up iniital get request and initial next_uri
     get = Net::HTTP::Get.new("/api/sensor-data?sensor-data-date=#{today}")
