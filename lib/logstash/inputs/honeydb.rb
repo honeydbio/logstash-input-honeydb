@@ -114,7 +114,7 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
       # loop through json payloads
       json[0]['data'].each do |payload|
         # add the event
-        event = LogStash::Event.new("message" => payload, "host" => @host)
+        event = LogStash::Event.new("honeydb" => payload, "host" => @host)
         decorate(event)
         queue << event
       end
