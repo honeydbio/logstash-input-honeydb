@@ -16,5 +16,9 @@ remove:
 publish:
 	gem push logstash-input-honeydb-$(VERSION).gem
 
+lint:
+	gem instal ruby-lint
+	ruby-lint lib/logstash/inputs/honeydb.rb
+
 clean:
 	rm logstash-input-honeydb-*.gem
