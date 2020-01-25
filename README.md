@@ -1,6 +1,6 @@
 # Logstash Input Plugin for HoneyDB
 
-[![Gem Version](https://badge.fury.io/rb/logstash-input-honeydb.svg)](https://badge.fury.io/rb/logstash-input-honeydb)
+[![Gem Version](https://badge.fury.io/rb/logstash-input-honeydb.svg)](https://rubygems.org/gems/logstash-input-honeydb)
 
 For more detail on using the HoneyDB logstash plugin, see [instructions](INSTRUCTIONS.md).
 
