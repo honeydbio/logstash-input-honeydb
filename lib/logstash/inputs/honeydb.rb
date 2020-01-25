@@ -5,6 +5,7 @@ require "stud/interval"
 require "socket" # for Socket.gethostname
 require "json"
 require "date"
+require "rubygems"
 
 # Fetch HoneyDB data.
 #
@@ -29,14 +30,18 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
     @host = Socket.gethostname
     @http = Net::HTTP.new('honeydb.io', 443)
     @http.set_debug_output($stdout) if @debug
-    @get = Net::HTTP::Get.new("/api/sensor-data")
     @http.use_ssl = true
+    @latest_from_id = 0
 
     # check if interval value is less than 5 minutes
     if @interval < 300
       @logger.warn("interval value is less than 5 minutes, setting interval to 5 minutes.")
       @interval = 300
     end
+
+    # get version for UA string
+    spec = Gem::Specification::load("logstash-input-honeydb.gemspec")
+    @version = spec.version
 
     @logger.info("Fetching HoneyDB data every #{interval / 60} minutes.")
   end # def register
@@ -62,13 +67,18 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
     today = Time.now.utc.strftime("%Y-%m-%d")
 
     # Set up iniital get request and initial next_uri
-    get = Net::HTTP::Get.new("/api/sensor-data?sensor-data-date=#{today}")
+    get = Net::HTTP::Get.new("/api/sensor-data/mydata?sensor-data-date=#{today}&from-id=#{@latest_from_id}")
     from_id = "not zero"
 
     # Loop through results until next_uri is empty.
-    while from_id != "0"
+    while from_id != 0
+      if @debug
+        @logger.info("Today: #{today} From: #{from_id} Latest from ID: #{@latest_from_id}")
+      end
+
       get["X-HoneyDb-ApiId"] = "#{@api_id}"
       get["X-HoneyDb-ApiKey"] = "#{@secret_key}"
+      get['User-Agent'] = "logstash-honeydb/#{@version}"
 
       begin
         response = @http.request(get)
@@ -79,6 +89,18 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
 
       if response.code == "524"
         @logger.warn("524 - Origin Timeout!")
+        @logger.info("Another attempt will be made later.")
+        return false
+      end
+
+      if response.code == "429"
+        @logger.warn("429 - Too Many Requests!")
+        @logger.info("You may have reached your requests per month limit, contact HoneyDB for options to increase your limit.")
+        return false
+      end
+
+      if response.code == "404"
+        @logger.warn("404 - Not Found!")
         return false
       end
 
@@ -97,12 +119,13 @@ class LogStash::Inputs::Honeydb < LogStash::Inputs::Base
         queue << event
       end
 
-      # get the next uri value
+      # get the next from_id
       from_id = json[1]['from_id']
 
-      # continue retreiving next_uri if it exists
-      if from_id != "0"
-        get = Net::HTTP::Get.new("/api/sensor-data?sensor-data-date=#{today}&from_id#{from_id}")
+      # continue retreiving from_id if not zero
+      if from_id != 0
+        @latest_from_id = from_id
+        get = Net::HTTP::Get.new("/api/sensor-data/mydata?sensor-data-date=#{today}&from-id=#{@latest_from_id}")
       end
     end
 
