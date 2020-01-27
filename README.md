@@ -2,6 +2,8 @@
 
 [![Gem Version](https://badge.fury.io/rb/logstash-input-honeydb.svg)](https://rubygems.org/gems/logstash-input-honeydb)
 
+If you run HoneyDB Agents (sensors), this logstash plugin will import your data sensor data into Elasticsearch.
+
 For more detail on using the HoneyDB logstash plugin, see [instructions](INSTRUCTIONS.md).
 
 This is a plugin for [Logstash](https://github.com/elastic/logstash).
